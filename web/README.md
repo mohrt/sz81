@@ -4,6 +4,8 @@ A WebAssembly build of the sz81 ZX81 core, set up as a Timex Sinclair 1000:
 NTSC timing, 2K RAM by default (16K, 32K or 48K selectable). The SDL front
 end is replaced by `host.c` and a canvas page, `index.html`.
 
+Try it online: <https://mohrt.github.io/sz81/>
+
 ## Build
 
 Needs [Emscripten](https://emscripten.org/) (`emcc` on your PATH, or set
