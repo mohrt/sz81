@@ -14,7 +14,8 @@ Needs [Emscripten](https://emscripten.org/) (`emcc` on your PATH, or set
     ./web/build.sh
 
 This compiles `web/ts1000.js` and `web/ts1000.wasm`, embeds
-`data/zx81.rom`, and checks that the machine boots and that
+`data/zx81.rom`, copies the test games from `games-etc` into `web/games/`
+for the page's Play buttons, and checks that the machine boots and that
 `games-etc/tetris1k.p` (2K) and `games-etc/tetris.p` (16K) load.
 
 ## Run
@@ -29,6 +30,8 @@ Then open <http://localhost:8000/>.
 - Type on your keyboard after clicking the screen, or use the on-screen
   keyboard. Keys map by position like the real machine: Shift+P is `"`,
   Backspace is DELETE, the arrow keys are Shift+5 to Shift+8.
+- The **Test games** section under the keyboard has a Play button and the
+  controls for each game in `games-etc`.
 - **Load .p** resets the machine with enough RAM for the file and runs
   `LOAD ""` on it, so programs saved with auto-run start by themselves.
 - **Save .p** downloads the program currently in memory. A BASIC `SAVE`

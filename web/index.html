@@ -108,6 +108,31 @@
     border-radius: 4px;
     padding: 1px 5px;
   }
+  .games { margin-top: 26px; color: var(--muted); font-size: 14px; }
+  .games h2, .games h3 { color: #f3efe4; font-weight: 600; margin: 0 0 6px; }
+  .games h2 { font-size: 20px; }
+  .games h3 { font-size: 16px; margin-top: 18px; }
+  .games ul { list-style: none; padding: 0; margin: 12px 0 0; display: grid; gap: 10px; }
+  .games li {
+    display: grid;
+    grid-template-columns: auto 10.5em 1fr;
+    gap: 4px 12px;
+    align-items: baseline;
+  }
+  .games li button { padding: 6px 12px; }
+  .games .name { white-space: nowrap; }
+  .games a { color: #c8bba4; }
+  .games kbd, .games code {
+    font: 12px sans-serif;
+    border: 1px solid #5c5348;
+    border-radius: 4px;
+    padding: 1px 5px;
+  }
+  .games code { border: 0; padding: 0; font-family: ui-monospace, monospace; }
+  @media (max-width: 640px) {
+    .games li { grid-template-columns: auto 1fr; }
+    .games li > span:last-child { grid-column: 1 / -1; }
+  }
   footer { margin-top: 22px; color: #7d7568; font: 12px/1.4 sans-serif; }
   footer a { color: #c8bba4; }
 </style>
@@ -142,6 +167,57 @@
     (DELETE is shift-0, quotes are shift-P, the arrows are shift-5 through shift-8).
     Shift and New Line together enters function mode.
   </p>
+  <section class="games">
+    <h2>Test games</h2>
+    <p>
+      These come from the
+      <a href="https://github.com/SegHaxx/sz81/tree/main/games-etc">games-etc folder</a>
+      of the sz81 repository, where you'll also find their source and notes.
+      <b>Play</b> loads one straight into the machine, picking enough RAM for it.
+    </p>
+    <ul>
+      <li>
+        <button type="button" data-game="tetris1k.p">Play</button>
+        <span class="name"><a href="games/tetris1k.p" download>tetris1k.p</a> (2K)</span>
+        <span>Tetris that fits in 1K. It shows only a <kbd>?</kbd>; press any key to start.
+        <kbd>S</kbd> rotates, <kbd>K</kbd>/<kbd>L</kbd> move, <kbd>D</kbd> drops.
+        Don't press Shift: the game hangs (a known bug in the original).</span>
+      </li>
+      <li>
+        <button type="button" data-game="tetris.p">Play</button>
+        <span class="name"><a href="games/tetris.p" download>tetris.p</a> (16K)</span>
+        <span>The full-size version. Same keys: <kbd>S</kbd> rotates,
+        <kbd>K</kbd>/<kbd>L</kbd> move, <kbd>D</kbd> drops.</span>
+      </li>
+      <li>
+        <button type="button" data-game="tetrishr.p">Play</button>
+        <span class="name"><a href="games/tetrishr.p" download>tetrishr.p</a> (16K)</span>
+        <span>Tetris in a pseudo-hi-res graphics mode. Same keys as above.</span>
+      </li>
+      <li>
+        <button type="button" data-game="mine81.p">Play</button>
+        <span class="name"><a href="games/mine81.p" download>mine81.p</a> (16K)</span>
+        <span>Minesweeper. Move with <kbd>H</kbd> <kbd>J</kbd> <kbd>K</kbd> <kbd>L</kbd>
+        (left, down, up, right), step on a square with <kbd>Space</kbd>,
+        mark a mine with <kbd>M</kbd>, unmark with <kbd>U</kbd>.</span>
+      </li>
+      <li>
+        <button type="button" data-game="pipepanic.p">Play</button>
+        <span class="name"><a href="games/pipepanic.p" download>pipepanic.p</a> (16K)</span>
+        <span>Connect the pipes. Press a key at the title screen; the menu shows the
+        controls (<kbd>Q</kbd> <kbd>A</kbd> <kbd>O</kbd> <kbd>P</kbd> to move,
+        <kbd>K</kbd> to select).</span>
+      </li>
+    </ul>
+    <h3>Loading your own programs</h3>
+    <p>
+      Use <b>Load .p</b> to open any ZX81 or Timex Sinclair 1000 <code>.p</code> file.
+      The machine resets with enough RAM for it and runs <code>LOAD ""</code>.
+      Programs saved with auto-run start by themselves; otherwise type
+      <kbd>R</kbd> then <kbd>Enter</kbd> to RUN. <b>Save .p</b> downloads whatever
+      program is in memory, and so does a BASIC <code>SAVE "NAME"</code>.
+    </p>
+  </section>
   <footer>
     Emulation core from <a href="https://github.com/SegHaxx/sz81">sz81</a>, GPL-2.0.
     The 8K ROM is the ZX81 ROM used by the Timex Sinclair 1000.
@@ -330,22 +406,40 @@ document.getElementById("ram").onchange = (ev) => {
   api.setRam(Number(ev.target.value));
   noteRam();
 };
-document.getElementById("load").onchange = async (ev) => {
-  const file = ev.target.files[0];
-  ev.target.value = "";
-  if (!file) return;
-  const bytes = new Uint8Array(await file.arrayBuffer());
+function loadProgram(bytes, name) {
   const ptr = mod._malloc(bytes.length);
   mod.HEAPU8.set(bytes, ptr);
   const err = api.stage(ptr, bytes.length);
   mod._free(ptr);
   if (err || api.loadStaged()) {
-    setStatus("Could not load " + file.name);
+    setStatus("Could not load " + name);
     return;
   }
   noteRam();
-  setStatus("Loaded " + file.name + "  ·  " + api.ramKb() + "K  ·  if it doesn't start by itself, type R then Enter to RUN");
+  setStatus("Loaded " + name + "  ·  " + api.ramKb() + "K  ·  if it doesn't start by itself, type R then Enter to RUN");
+  screen.focus();
+}
+document.getElementById("load").onchange = async (ev) => {
+  const file = ev.target.files[0];
+  ev.target.value = "";
+  if (!file) return;
+  loadProgram(new Uint8Array(await file.arrayBuffer()), file.name);
 };
+document.querySelectorAll("[data-game]").forEach((btn) => {
+  btn.onclick = async () => {
+    if (!api) return;
+    const name = btn.dataset.game;
+    setStatus("Fetching " + name + "…");
+    try {
+      const res = await fetch("games/" + name);
+      if (!res.ok) throw new Error(res.status + " " + res.statusText);
+      loadProgram(new Uint8Array(await res.arrayBuffer()), name);
+      screen.scrollIntoView({ behavior: "smooth", block: "center" });
+    } catch (err) {
+      setStatus("Could not fetch " + name + ": " + err.message);
+    }
+  };
+});
 document.getElementById("save").onclick = () => {
   const len = api.programLen();
   if (!len) {
