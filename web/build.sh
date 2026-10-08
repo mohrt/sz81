@@ -27,6 +27,11 @@ mkdir -p "$EM_CACHE"
   -sALLOW_MEMORY_GROWTH=1 \
   --embed-file data/zx81.rom@/zx81.rom
 
+# The page's Play buttons fetch these from web/games/.
+mkdir -p web/games
+cp games-etc/tetris1k.p games-etc/tetris.p games-etc/tetrishr.p \
+  games-etc/mine81.p games-etc/pipepanic/pipepanic.p web/games/
+
 node --input-type=commonjs -e '
 const createTS1000 = require("./web/ts1000.js");
 (async () => {
