@@ -135,6 +135,8 @@
   }
   footer { margin-top: 22px; color: #7d7568; font: 12px/1.4 sans-serif; }
   footer a { color: #c8bba4; }
+  footer .emulators { display: flex; flex-wrap: wrap; gap: 4px 12px; margin-bottom: 8px; font-size: 13px; }
+  footer .emulators strong { color: #f3efe4; font-weight: 600; }
 </style>
 </head>
 <body>
@@ -219,6 +221,13 @@
     </p>
   </section>
   <footer>
+    <nav class="emulators" aria-label="Emulators">
+      Emulators:
+      <strong aria-current="page">Timex Sinclair 1000</strong>
+      <a href="https://mohrt.github.io/c64/">Commodore 64</a>
+      <a href="https://mohrt.github.io/atari2600/">Atari 2600</a>
+      · <a href="https://mohrt.com/">mohrt.com</a>
+    </nav>
     Emulation core from <a href="https://github.com/SegHaxx/sz81">sz81</a>, GPL-2.0.
     The 8K ROM is the ZX81 ROM used by the Timex Sinclair 1000.
   </footer>
