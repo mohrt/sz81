@@ -13,9 +13,9 @@ Needs [Emscripten](https://emscripten.org/) (`emcc` on your PATH, or set
 
     ./web/build.sh
 
-This compiles `web/ts1000.js` and `web/ts1000.wasm`, embeds
-`data/zx81.rom`, copies the test games from `games-etc` into `web/games/`
-for the page's Play buttons, and checks that the machine boots and that
+This compiles `web/ts1000.js` and `web/ts1000.wasm`, copies the test
+games from `games-etc` into `web/games/` for the page's Play buttons, and
+checks that the machine boots and that
 `games-etc/tetris1k.p` (2K) and `games-etc/tetris.p` (16K) load.
 
 ## Run
