@@ -451,7 +451,7 @@ document.getElementById("ram").onchange = (ev) => {
   api.setRam(Number(ev.target.value));
   noteRam();
 };
-function loadProgram(bytes, name) {
+function loadProgram(bytes, name, bundled = false) {
   const ptr = mod._malloc(bytes.length);
   mod.HEAPU8.set(bytes, ptr);
   const err = api.stage(ptr, bytes.length);
@@ -460,6 +460,8 @@ function loadProgram(bytes, name) {
     setStatus("Could not load " + name);
     return;
   }
+  // Only bundled games are named, so a player's own file names stay private.
+  window.gtag?.("event", "game_loaded", { system: "sz81", game: bundled ? name : "own file" });
   noteRam();
   setStatus("Loaded " + name + "  ·  " + api.ramKb() + "K  ·  if it doesn't start by itself, type R then Enter to RUN");
   screen.focus();
@@ -478,7 +480,7 @@ document.querySelectorAll("[data-game]").forEach((btn) => {
     try {
       const res = await fetch("games/" + name);
       if (!res.ok) throw new Error(res.status + " " + res.statusText);
-      loadProgram(new Uint8Array(await res.arrayBuffer()), name);
+      loadProgram(new Uint8Array(await res.arrayBuffer()), name, true);
       screen.scrollIntoView({ behavior: "smooth", block: "center" });
     } catch (err) {
       setStatus("Could not fetch " + name + ": " + err.message);
